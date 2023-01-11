@@ -1,0 +1,58 @@
+# -*- coding: cp936 -*-
+# -*- coding: utf-8 -*
+import io
+import os
+
+
+
+
+# 生成文件
+import random
+
+
+def make_m3u_file(name, link):
+    obj = open(name, mode="w+", encoding="utf8")
+    obj.write("#EXTM3U\n#EXTINF:-1,")
+    obj.write(name + "\n")
+    obj.write(link)
+    obj.close
+
+
+# 获取文件名,并去除非法字符
+def get_item_name(extinf):
+    name = extinf.split(",", 1)[1]
+    name = name.replace(" ", "")
+    name = name.replace(":", ".")
+    name = name.replace("/", ".")
+    name = name.replace("\\", ".")
+    name = name.replace("|", ".")
+    name = name.replace("?", ".")
+    name = name.replace("*", ".")
+    name = name.replace("<", ".")
+    name = name.replace(">", ".")
+    i = random.randint(0,9)
+    return name +"_"+str(i)+".m3u"
+
+
+# 处理输入的文本文件
+def m3u_dump(m3u_file):
+    item_name = ""
+    item_link = ""
+    lines = m3u_file.readlines()
+    for line in lines:
+        line = line.rstrip("\r\n")
+        if line.startswith("#EXTINF"):
+            item_name = line
+        if line.startswith("http"):
+            item_link = line
+            print(get_item_name(item_name), item_link);
+            make_m3u_file(get_item_name(item_name), item_link)
+
+
+###################################################
+# 程序入口
+m3u_file_name = "D:\\test\\test\\全国各地直播源.m3u"
+m3u_file_obj = open(m3u_file_name, "r", encoding="utf8")
+m3u_dump(m3u_file_obj)
+m3u_file_obj.close()
+print("处理完成!")
